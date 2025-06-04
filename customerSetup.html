@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Setup Form</title>
+    <link rel="stylesheet" href="customerSetup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="main-content-wrapper">
+        <div class="container form-container">
+            <h1>Customer Setup </h1>
+
+            <div class="form-section">
+                <h2>Customer Details</h2>
+                <form id="customerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customerID">Customer ID:</label>
+                            <input type="text" id="customerID" name="customerID" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Address:</label>
+                            <input type="text" id="address" name="address">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customerName">Name:</label>
+                            <input type="text" id="customerName" name="customerName" required>
+                        </div>
+                        <div class="form-group relation-group-container">
+                            <label for="relation">Relation:</label>
+                            <div class="relation-input-wrapper">
+                                <select id="relation1" name="relation[]" class="relation-dropdown">
+                                    <option value="S/o">S/o</option>
+                                    <option value="W/o">W/o</option>
+                                    <option value="D/o">D/o</option>
+                                </select>
+                                <button type="button" class="add-relation-btn" title="Add another relation">+</button>
+                                <button type="button" class="remove-relation-btn" title="Remove relation">-</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="fatherName">Father Name:</label>
+                            <input type="text" id="fatherName" name="fatherName">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cnic">CNIC:</label>
+                            <input type="text" id="cnic" name="cnic" pattern="^\d{5}-\d{7}-\d{1}$" placeholder="XXXXX-XXXXXX-X" title="CNIC must be in XXXXX-XXXXXX-X format" maxlength="15">
+                        </div>
+                        <div class="form-group">
+                            <label for="primaryCellNo">Primary Cell No:</label>
+                            <input type="text" id="primaryCellNo" name="primaryCellNo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="secondaryCellNo">Secondary Cell No:</label>
+                            <input type="text" id="secondaryCellNo" name="secondaryCellNo">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2>Type</h2>
+                        <div class="form-row radio-group-wrapper">
+                            <div class="radio-group">
+                                <input type="radio" id="typeCustomer" name="customerVendorType" value="Customer" checked>
+                                <label for="typeCustomer">Customer</label>
+                            </div>
+                            <div class="radio-group">
+                                <input type="radio" id="typeVendor" name="customerVendorType" value="Vendor">
+                                <label for="typeVendor">Vendor</label>
+                            </div>
+                            <div class="radio-group">
+                                <input type="radio" id="typeBoth" name="customerVendorType" value="Both">
+                                <label for="typeBoth">Both</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2>ID Card Attachment</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>CNIC Front Picture:</label>
+                                <div class="file-input-wrapper">
+                                    <input type="file" id="cnicFront" name="cnicFront" accept="image/*" class="hidden-file-input">
+                                    <label for="cnicFront" class="custom-file-upload">Choose File</label>
+                                    <span id="cnicFrontFileName" class="file-name-display">No file chosen</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>CNIC Back Picture:</label>
+                                <div class="file-input-wrapper">
+                                    <input type="file" id="cnicBack" name="cnicBack" accept="image/*" class="hidden-file-input">
+                                    <label for="cnicBack" class="custom-file-upload">Choose File</label>
+                                    <span id="cnicBackFileName" class="file-name-display">No file chosen</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2>Balance Invoice Entry</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="invoiceNumber">Invoice Number:</label>
+                                <input type="text" id="invoiceNumber" name="invoiceNumber">
+                            </div>
+                            <div class="form-group">
+                                <label for="amountOpening">Amount (Opening):</label>
+                                <input type="text" id="amountOpening" name="amountOpening" inputmode="numeric" pattern="[0-9]*\.?[0-9]*" title="Numbers and optional decimal point only">
+                            </div>
+                            <div class="form-group">
+                                <label for="invoiceDate">Invoice Date:</label>
+                                <input type="date" id="invoiceDate" name="invoiceDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit">Submit</button>
+                        <button type="button" id="printListBtn">Print List</button>
+                        <button type="button" id="backToDashboardBtn">Back to Dashboard</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="container list-container">
+            <div class="customers-list-section">
+                <h2 class="list-heading">Customers List</h2>
+                <div class="list-controls">
+                    <div class="search-group">
+                        <input type="text" id="searchByCustomerName" placeholder="Search all columns (CustomerID, Name, Father Name, Address, CNIC, Cell)">
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="customers-table">
+                        <thead>
+                            <tr>
+                                <th>Customer ID</th>
+                                <th>Customer Name</th>
+                                <th>Father Name</th>
+                                <th>Address</th>
+                                <th>CNIC</th> <th>Primary Cell</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>UD-2025-0798</td>
+                                <td>Imran Jamil</td>
+                                <td>Jamil Ahmed</td>
+                                <td>Siyal Morri</td>
+                                <td>42101-1234567-8</td> <td>03063929876</td>
+                                <td class="action-buttons">
+                                    <button class="icon-btn view-btn" title="View"><i class="fas fa-eye"></i></button>
+                                    <button class="icon-btn edit-btn" title="Edit"><i class="fas fa-edit"></i></button>
+                                    <button class="icon-btn delete-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                                    <button class="icon-btn print-btn" title="Print"><i class="fas fa-print"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>UD-2025-0797</td>
+                                <td>Sarfraz Ali Laghari</td>
+                                <td>Ali Bux Laghari</td>
+                                <td>Head Quarter</td>
+                                <td>42101-9876543-2</td> <td>03001234567</td>
+                                <td class="action-buttons">
+                                    <button class="icon-btn view-btn" title="View"><i class="fas fa-eye"></i></button>
+                                    <button class="icon-btn edit-btn" title="Edit"><i class="fas fa-edit"></i></button>
+                                    <button class="icon-btn delete-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                                    <button class="icon-btn print-btn" title="Print"><i class="fas fa-print"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>UD-2025-0796</td>
+                                <td>Ameer Ali Labana</td>
+                                <td>Ghulam Rasool Labana</td>
+                                <td>Larkano Road</td>
+                                <td>42101-5678901-0</td> <td>03339876543</td>
+                                <td class="action-buttons">
+                                    <button class="icon-btn view-btn" title="View"><i class="fas fa-eye"></i></button>
+                                    <button class="icon-btn edit-btn" title="Edit"><i class="fas fa-edit"></i></button>
+                                    <button class="icon-btn delete-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                                    <button class="icon-btn print-btn" title="Print"><i class="fas fa-print"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="customerSetup.js"></script>
+</body>
+</html>
