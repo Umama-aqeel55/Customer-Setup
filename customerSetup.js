@@ -7,19 +7,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const cnicInput = document.getElementById('cnic');
     const customersTableBody = document.querySelector('.customers-table tbody');
     const submitButton = customerForm.querySelector('button[type="submit"]');
-       
+
     const customerIDInput = document.getElementById('customerID');
     const customerNameInput = document.getElementById('customerName');
     const fatherNameInput = document.getElementById('fatherName');
     const addressInput = document.getElementById('address');
-    const cnicFormInput = document.getElementById('cnic'); 
+    const cnicFormInput = document.getElementById('cnic');
     const primaryCellNoInput = document.getElementById('primaryCellNo');
     const secondaryCellNoInput = document.getElementById('secondaryCellNo');
     const invoiceNumberInput = document.getElementById('invoiceNumber');
     const amountOpeningInput = document.getElementById('amountOpening');
     const invoiceDateInput = document.getElementById('invoiceDate');
 
-    let editingRow = null; 
+    const hideListBtn = document.getElementById('hideListBtn');
+    const showListBtn = document.getElementById('showListBtn');
+    const listContainer = document.querySelector('.list-container');
+    const printSelectionDropdown = document.getElementById('printSelection');
+    const customersTable = document.querySelector('.customers-table');
+
+    let editingRow = null;
 
     function handleFileInputChange(inputElement, fileNameDisplayElement) {
         if (inputElement.files.length > 0) {
@@ -126,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
             for (let i = 0; i < relationDropdowns.length; i++) {
                 const relationType = relationDropdowns[i] ? relationDropdowns[i].value : '';
                 if (relationType) {
-                     data.relations.push({ type: relationType });
+                    data.relations.push({ type: relationType });
                 }
             }
 
@@ -136,8 +142,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 editingRow.cells[1].textContent = data.customerName;
                 editingRow.cells[2].textContent = data.fatherName;
                 editingRow.cells[3].textContent = data.address;
-                editingRow.cells[4].textContent = data.cnic; 
-                editingRow.cells[5].textContent = data.primaryCellNo; 
+                editingRow.cells[4].textContent = data.cnic;
+                editingRow.cells[5].textContent = data.primaryCellNo;
 
                 editingRow = null;
                 submitButton.textContent = 'Submit';
@@ -150,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 newRow.insertCell(1).textContent = data.customerName;
                 newRow.insertCell(2).textContent = data.fatherName;
                 newRow.insertCell(3).textContent = data.address;
-                newRow.insertCell(4).textContent = data.cnic; 
+                newRow.insertCell(4).textContent = data.cnic;
                 newRow.insertCell(5).textContent = data.primaryCellNo;
 
                 const actionsCell = newRow.insertCell(6);
@@ -193,6 +199,66 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Returning to dashboard...');
         });
     }
+
+    if (hideListBtn && showListBtn && listContainer) {
+        hideListBtn.addEventListener('click', function() {
+            listContainer.style.display = 'none';
+            hideListBtn.style.display = 'none';
+            showListBtn.style.display = 'inline-block';
+        });
+
+        showListBtn.addEventListener('click', function() {
+            listContainer.style.display = 'block'; 
+            showListBtn.style.display = 'none';
+            hideListBtn.style.display = 'inline-block';
+        });
+    }
+
+    if (printSelectionDropdown && customersTable) {
+        printSelectionDropdown.addEventListener('change', function() {
+            const selectedValue = this.value;
+            const headers = customersTable.querySelectorAll('th');
+            const rows = customersTable.querySelectorAll('tbody tr');
+
+            const columnIndices = {
+                'customerID': 0,
+                'customerName': 1,
+                'fatherName': 2,
+                'address': 3,
+                'cnic': 4,
+                'primaryCell': 5,
+                'actions': 6
+            };
+
+            Object.values(columnIndices).forEach(index => {
+                if (headers[index]) headers[index].style.display = 'none';
+                rows.forEach(row => {
+                    if (row.cells[index]) row.cells[index].style.display = 'none';
+                });
+            });
+
+            if (selectedValue === 'all') {
+                Object.values(columnIndices).forEach(index => {
+                    if (headers[index]) headers[index].style.display = '';
+                    rows.forEach(row => {
+                        if (row.cells[index]) row.cells[index].style.display = '';
+                    });
+                });
+            } else {
+                const selectedColumnIndex = columnIndices[selectedValue];
+                const actionsColumnIndex = columnIndices['actions'];
+
+                if (headers[selectedColumnIndex]) headers[selectedColumnIndex].style.display = '';
+                if (headers[actionsColumnIndex]) headers[actionsColumnIndex].style.display = '';
+
+                rows.forEach(row => {
+                    if (row.cells[selectedColumnIndex]) row.cells[selectedColumnIndex].style.display = '';
+                    if (row.cells[actionsColumnIndex]) row.cells[actionsColumnIndex].style.display = '';
+                });
+            }
+        });
+    }
+
 
     const searchInput = document.getElementById('searchByCustomerName');
 
@@ -239,8 +305,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const customerName = row.children[1].textContent;
             const fatherName = row.children[2].textContent;
             const address = row.children[3].textContent;
-            const cnic = row.children[4].textContent; 
-            const primaryCell = row.children[5].textContent; 
+            const cnic = row.children[4].textContent;
+            const primaryCell = row.children[5].textContent;
 
             if (target.classList.contains('view-btn')) {
                 alert(`Viewing details for customer ID: ${customerId}\nName: ${customerName}\nFather Name: ${fatherName}\nAddress: ${address}\nCNIC: ${cnic}\nPrimary Cell: ${primaryCell}`);
@@ -250,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 customerNameInput.value = customerName;
                 fatherNameInput.value = fatherName;
                 addressInput.value = address;
-                cnicFormInput.value = cnic; 
+                cnicFormInput.value = cnic;
                 primaryCellNoInput.value = primaryCell;
 
                 customerIDInput.readOnly = true;
