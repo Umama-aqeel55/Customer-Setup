@@ -1,13 +1,12 @@
-
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     margin: 0;
     padding: 20px;
-    display: flex; 
+    display: flex;
     flex-direction: column;
-    justify-content: flex-start; 
-    align-items: center; 
+    justify-content: flex-start;
+    align-items: center;
     min-height: 100vh;
     gap: 20px;
 }
@@ -15,10 +14,10 @@ body {
 .main-content-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center; 
-    gap: 20px; 
-    width: 100%; 
-    max-width: 1100px; 
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 1100px;
 }
 
 .container {
@@ -27,7 +26,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 900px; 
+    max-width: 900px;
 }
 
 .list-container {
@@ -72,7 +71,7 @@ h2 {
 
 .form-group {
     flex: 1;
-    min-width: 250px; 
+    min-width: 250px;
     display: flex;
     flex-direction: column;
 }
@@ -85,13 +84,13 @@ label {
 
 input[type="text"],
 input[type="email"],
-input[type="date"], 
+input[type="date"],
 select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 
 input[type="text"]:disabled {
@@ -105,7 +104,7 @@ input[type="text"]:disabled {
     display: flex;
     align-items: center;
     gap: 10px;
-    width: 100%; 
+    width: 100%;
     box-sizing: border-box;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -175,19 +174,18 @@ input[type="text"]:disabled {
 }
 
 .relation-input-wrapper {
-    display: flex; 
-    align-items: center; 
-    gap: 5px; 
-    width: 100%; 
-    box-sizing: border-box; 
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .relation-dropdown {
-
-    width: 195px; 
-    flex-shrink: 0; 
-    padding-right: 25px; 
-    -webkit-appearance: none; 
+    width: 195px;
+    flex-shrink: 0;
+    padding-right: 25px;
+    -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M9.293%2012.95l.707.707L15.657%208l-1.414-1.414L10%2010.828l-4.243-4.242L4.343%208z%22%20fill%3D%22%23666%22%2F%3E%3C%2Fsvg%3E'); /* Custom dropdown arrow */
@@ -197,24 +195,24 @@ input[type="text"]:disabled {
 }
 
 .relation-name-input {
-    flex-grow: 1; 
-    min-width: 100px; 
+    flex-grow: 1;
+    min-width: 100px;
 }
 
 .relation-input-wrapper button {
     border: none;
     border-radius: 5px;
-    width: 35px; 
-    height: 35px; 
-    font-size: 1.5em; 
+    width: 35px;
+    height: 35px;
+    font-size: 1.5em;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    flex-shrink: 0; 
-    padding: 0; 
-    color: white; 
+    flex-shrink: 0;
+    padding: 0;
+    color: white;
 }
 
 .add-relation-btn {
@@ -225,7 +223,7 @@ input[type="text"]:disabled {
 }
 
 .remove-relation-btn {
-    background-color: #dc3545; 
+    background-color: #dc3545;
 }
 .remove-relation-btn:hover {
     background-color: #c82333;
@@ -264,10 +262,8 @@ input[type="text"]:disabled {
     background-color: #0056b3;
 }
 
-
-
 .form-actions button[id="backToDashboardBtn"] {
-    background-color: #6c757d; 
+    background-color: #6c757d;
     color: white;
 }
 .form-actions button[id="backToDashboardBtn"]:hover {
@@ -281,21 +277,23 @@ input[type="text"]:disabled {
 
 .list-controls {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    flex-wrap: wrap; /* Allows items to wrap to the next line on smaller screens */
+    gap: 10px; /* Reduced gap for better alignment in a single row */
     margin-bottom: 20px;
-    align-items: flex-end; 
+    align-items: flex-end;
+    /* Added for single row alignment */
+    justify-content: space-between; /* Distributes items with space between them */
 }
 
 .list-controls .search-group {
     display: flex;
     flex-direction: column;
-    flex: 1; 
-    min-width: 180px; 
+    flex: 2; /* Allow search field to take more space */
+    min-width: 180px;
 }
 
 .list-controls label {
-    font-weight: normal; 
+    font-weight: normal;
     margin-bottom: 5px;
     color: #555;
     font-size: 0.9em;
@@ -305,6 +303,33 @@ input[type="text"]:disabled {
     padding: 8px 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    flex-grow: 1; /* Allow search input to grow */
+}
+
+/* New CSS for Hide/Unhide Button and Print Selection Dropdown */
+.control-button {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    /* Removed margin-left to rely on gap in .list-controls */
+    white-space: nowrap; /* Prevent button text from wrapping */
+}
+
+.control-button:hover {
+    background-color: #0056b3;
+}
+
+.control-dropdown {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    /* Removed margin-left to rely on gap in .list-controls */
+    background-color: #fff;
+    cursor: pointer;
+    min-width: 150px; /* Ensure dropdown has a reasonable width */
 }
 
 .table-responsive {
@@ -313,7 +338,7 @@ input[type="text"]:disabled {
 
 .customers-table {
     width: 100%;
-    border-collapse: collapse; 
+    border-collapse: collapse;
     margin-bottom: 20px;
     background-color: #fff;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -324,7 +349,7 @@ input[type="text"]:disabled {
     padding: 12px 15px;
     border: 1px solid #ddd;
     text-align: left;
-    white-space: nowrap; 
+    white-space: nowrap;
 }
 
 .customers-table thead th {
@@ -336,22 +361,22 @@ input[type="text"]:disabled {
 }
 
 .customers-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9; 
+    background-color: #f9f9f9;
 }
 
 .customers-table tbody tr:hover {
-    background-color: #f1f1f1; 
+    background-color: #f1f1f1;
 }
 
 .action-buttons {
-    text-align: center; 
-    min-width: 140px; 
+    text-align: center;
+    min-width: 140px;
 }
 
 .icon-btn {
     background: none;
     border: none;
-    color: #007bff; 
+    color: #007bff;
     cursor: pointer;
     font-size: 1.1em;
     margin: 0 4px;
@@ -365,13 +390,13 @@ input[type="text"]:disabled {
     color: #0056b3;
 }
 
-.view-btn { color: #28a745; } 
+.view-btn { color: #28a745; }
 .view-btn:hover { background-color: #e6ffed; }
 
-.edit-btn { color: #ffc107; } 
+.edit-btn { color: #ffc107; }
 .edit-btn:hover { background-color: #fff8e6; }
 
-.delete-btn { color: #dc3545; } 
+.delete-btn { color: #dc3545; }
 .delete-btn:hover { background-color: #ffe6e8; }
 
 .print-btn { color: #6c757d; }
@@ -399,12 +424,12 @@ input[type="text"]:disabled {
 
     .form-actions {
         flex-direction: column;
-        align-items: stretch; 
+        align-items: stretch;
     }
 
     .form-actions button {
         width: 100%;
-        margin-bottom: 10px; 
+        margin-bottom: 10px;
     }
 
     .list-controls {
@@ -413,12 +438,12 @@ input[type="text"]:disabled {
     }
 
     .relation-input-wrapper {
-        flex-wrap: nowrap; 
-        justify-content: flex-start; 
+        flex-wrap: nowrap;
+        justify-content: flex-start;
     }
 
     .relation-dropdown {
-        width: 100px; 
+        width: 100px;
         min-width: 60px;
     }
     .relation-name-input {
@@ -426,7 +451,7 @@ input[type="text"]:disabled {
     }
 
     .relation-input-wrapper button {
-        font-size: 1.2em; 
+        font-size: 1.2em;
         width: 30px;
         height: 30px;
     }
