@@ -32,8 +32,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchByPrimaryCellInput = document.getElementById('searchByPrimaryCell');
 
     let editingRow = null;
+    const defaultRelations = ['S/o', 'W/o', 'D/o'];
+    let customRelations = []; 
+    let relationCount = 1; 
+    
+    customerIDInput.readOnly = true; 
 
-    customerIDInput.readOnly = true;
 
     function handleFileInputChange(inputElement, fileNameDisplayElement) {
         if (inputElement.files.length > 0) {
@@ -42,6 +46,62 @@ document.addEventListener('DOMContentLoaded', function() {
             fileNameDisplayElement.textContent = 'No file chosen';
         }
     }
+
+    function populateRelationDropdown(dropdownElement, setDefaultSo = false) {
+        const currentValue = dropdownElement.value;
+        dropdownElement.innerHTML = '';
+
+        const defaultSelectOption = document.createElement('option');
+        defaultSelectOption.value = ''; 
+        defaultSelectOption.textContent = 'Select Relation';
+        dropdownElement.appendChild(defaultSelectOption);
+
+        defaultRelations.forEach(relation => {
+            const option = document.createElement('option');
+            option.value = relation;
+            option.textContent = relation;
+            dropdownElement.appendChild(option);
+        });
+
+        customRelations.forEach(relation => {
+            const option = document.createElement('option');
+            option.value = relation;
+            option.textContent = relation;
+            dropdownElement.appendChild(option);
+        });
+
+        if ([...defaultRelations, ...customRelations].includes(currentValue)) {
+            dropdownElement.value = currentValue;
+        } else if (setDefaultSo && dropdownElement.value === '') {
+            dropdownElement.value = 'S/o';
+        } else {
+             dropdownElement.value = '';
+        }
+    }
+
+    function updateAllRelationDropdowns() {
+        document.querySelectorAll('.relation-dropdown').forEach(dropdown => {
+            
+            populateRelationDropdown(dropdown, false);
+        });
+    }
+
+    function updateRelationButtons() {
+        const relationWrappers = document.querySelectorAll('.relation-input-wrapper');
+        relationWrappers.forEach((wrapper, index) => {
+            const addButton = wrapper.querySelector('.add-relation-btn');
+            const removeButton = wrapper.querySelector('.remove-relation-btn');
+
+            removeButton.style.display = 'inline-block'; 
+
+            if (index === relationWrappers.length - 1) {
+                addButton.style.display = 'inline-block';
+            } else {
+                addButton.style.display = 'none';
+            }
+        });
+    }
+
 
     if (cnicFrontInput && cnicFrontFileNameDisplay) {
         cnicFrontInput.addEventListener('change', () => {
@@ -55,80 +115,83 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    let relationCount = 1;
-
-    function updateRelationButtons() {
-        const relationWrappers = document.querySelectorAll('.relation-input-wrapper');
-        relationWrappers.forEach((wrapper, index) => {
-            const addButton = wrapper.querySelector('.add-relation-btn');
-            const removeButton = wrapper.querySelector('.remove-relation-btn');
-
-            removeButton.style.display = (relationWrappers.length > 1) ? 'inline-block' : 'none';
-
-
-            if (index === relationWrappers.length - 1) {
-                addButton.style.display = 'inline-block';
-            } else {
-                addButton.style.display = 'none';
-            }
-        });
-    }
-
     document.addEventListener('click', function(event) {
+        
         if (event.target.classList.contains('add-relation-btn')) {
+            const currentWrapper = event.target.closest('.relation-input-wrapper');
+            const relationWrappers = document.querySelectorAll('.relation-input-wrapper');
+            const isLastAddButton = currentWrapper === relationWrappers[relationWrappers.length - 1];
+
+            if (isLastAddButton) {
+                
+                Swal.fire({
+                    title: 'Add new relation type?',
+                    input: 'text',
+                    inputPlaceholder: 'Enter new relation (e.g., Brother, Sister)',
+                    showCancelButton: true,
+                    confirmButtonText: 'Add Relation',
+                    showLoaderOnConfirm: true,
+                    preConfirm: (newRelation) => {
+                        if (!newRelation) {
+                            Swal.showValidationMessage('Relation type cannot be empty');
+                            return false;
+                        }
+                        const allRelations = [...defaultRelations, ...customRelations].map(r => r.toLowerCase());
+                        if (allRelations.includes(newRelation.trim().toLowerCase())) {
+                            Swal.showValidationMessage('This relation type already exists');
+                            return false;
+                        }
+                        return newRelation.trim();
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const newRelation = result.value;
+                        customRelations.push(newRelation);
+                        updateAllRelationDropdowns(); 
+
+                        Swal.fire('Added!', `"${newRelation}" has been added as a new relation type.`, 'success');
+                    }
+                });
+            } else {
+                const relationGroupContainer = currentWrapper.closest('.form-group.relation-group-container');
+
+                relationCount++;
+                const newRelationWrapper = document.createElement('div');
+                newRelationWrapper.classList.add('relation-input-wrapper');
+                newRelationWrapper.innerHTML = `
+                    <select id="relation${relationCount}" name="relation[]" class="relation-dropdown"></select>
+                    <button type="button" class="add-relation-btn" title="Add another relation">+</button>
+                    <button type="button" class="remove-relation-btn" title="Clear relation">-</button>
+                `; 
+                relationGroupContainer.appendChild(newRelationWrapper);
+                populateRelationDropdown(newRelationWrapper.querySelector('.relation-dropdown'), true); 
+                updateRelationButtons(); 
+                Swal.fire('Added!', 'New relation field has been added.', 'success');
+            }
+        }
+
+        if (event.target.classList.contains('remove-relation-btn')) {
+            const currentWrapper = event.target.closest('.relation-input-wrapper');
+            const relationDropdown = currentWrapper.querySelector('.relation-dropdown');
+
             Swal.fire({
-                title: 'Add another relation field?',
-                text: "This will add a new field for another relation.",
+                title: 'Clear selected relation?',
+                text: "The selected relation will be reset to 'Select Relation'.",
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, add it!'
+                confirmButtonText: 'Yes, clear it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    const currentWrapper = event.target.closest('.relation-input-wrapper');
-                    const relationGroupContainer = currentWrapper.closest('.form-group.relation-group-container');
-
-                    relationCount++;
-                    const newRelationWrapper = document.createElement('div');
-                    newRelationWrapper.classList.add('relation-input-wrapper');
-                    newRelationWrapper.innerHTML = `
-                        <select id="relation${relationCount}" name="relation[]" class="relation-dropdown">
-                            <option value="S/o">S/o</option>
-                            <option value="W/o">W/o</option>
-                            <option value="D/o">D/o</option>
-                        </select>
-                        <button type="button" class="add-relation-btn" title="Add another relation">+</button>
-                        <button type="button" class="remove-relation-btn" title="Remove relation">-</button>
-                    `;
-                    relationGroupContainer.appendChild(newRelationWrapper);
-                    updateRelationButtons();
-                    Swal.fire('Added!', 'New relation field has been added.', 'success');
-                }
-            });
-        }
-
-        if (event.target.classList.contains('remove-relation-btn')) {
-            Swal.fire({
-                title: 'Remove this relation field?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, remove it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const currentWrapper = event.target.closest('.relation-input-wrapper');
-                    currentWrapper.remove();
-                    updateRelationButtons();
-                    Swal.fire('Removed!', 'Relation field has been removed.', 'success');
+                    relationDropdown.value = ''; 
+                    console.log('Dropdown value after clear attempt:', relationDropdown.value); 
+                    Swal.fire('Cleared!', 'Relation has been reset.', 'success');
                 }
             });
         }
     });
-
-    updateRelationButtons(); 
 
     if (cnicInput) {
         cnicInput.addEventListener('input', function(e) {
@@ -150,13 +213,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (customerForm && customersTableBody) {
         customerForm.addEventListener('submit', function(event) {
-            event.preventDefault();
+            event.preventDefault(); 
 
             const formData = new FormData(customerForm);
             const data = {};
             for (let [key, value] of formData.entries()) {
                 if (key === 'cnicFront' || key === 'cnicBack') {
-                    data[key] = value.name || 'No file selected';
+                    data[key] = value.name || 'No file selected'; 
                 } else {
                     data[key] = value;
                 }
@@ -166,16 +229,19 @@ document.addEventListener('DOMContentLoaded', function() {
             data.relations = [];
             for (let i = 0; i < relationDropdowns.length; i++) {
                 const relationType = relationDropdowns[i] ? relationDropdowns[i].value : '';
-                if (relationType) {
+                
+                if (relationType && relationType !== '') { 
                     data.relations.push({ type: relationType });
                 }
             }
+            console.log("Submitted Relations:", data.relations); 
 
             if (editingRow) {
                 
                 editingRow.cells[0].textContent = data.customerID;
                 editingRow.cells[1].textContent = data.customerName;
                 editingRow.cells[2].textContent = data.fatherName;
+
                 editingRow.cells[3].textContent = data.address;
                 editingRow.cells[4].textContent = data.cnic;
                 editingRow.cells[5].textContent = data.primaryCellNo;
@@ -191,6 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 newRow.insertCell(0).textContent = data.customerID;
                 newRow.insertCell(1).textContent = data.customerName;
                 newRow.insertCell(2).textContent = data.fatherName;
+                
                 newRow.insertCell(3).textContent = data.address;
                 newRow.insertCell(4).textContent = data.cnic;
                 newRow.insertCell(5).textContent = data.primaryCellNo;
@@ -206,33 +273,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 Swal.fire('Added!', 'New customer added successfully!', 'success');
             }
 
-            
             customerForm.reset();
             cnicFrontFileNameDisplay.textContent = 'No file chosen';
             cnicBackFileNameDisplay.textContent = 'No file chosen';
 
-            const initialRelationWrapper = document.querySelector('.relation-group-container .relation-input-wrapper');
-            while (initialRelationWrapper && initialRelationWrapper.nextElementSibling) {
-                initialRelationWrapper.nextElementSibling.remove();
+            const relationGroupContainer = document.querySelector('.form-group.relation-group-container');
+            let currentWrappers = relationGroupContainer.querySelectorAll('.relation-input-wrapper');
+            
+            for (let i = 1; i < currentWrappers.length; i++) {
+                currentWrappers[i].remove();
             }
-            if (initialRelationWrapper) {
-                initialRelationWrapper.querySelector('.relation-dropdown').value = 'S/o';
+            const firstRelationWrapper = relationGroupContainer.querySelector('.relation-input-wrapper');
+            if (firstRelationWrapper) {
+                
+                populateRelationDropdown(firstRelationWrapper.querySelector('.relation-dropdown'), true);
             }
-            relationCount = 1;
-            updateRelationButtons();
+            relationCount = 1; 
+            updateRelationButtons(); 
         });
     }
 
     const printListBtn = document.getElementById('printListBtn');
-    const backToDashboardBtn = document.getElementById('backToDashboardBtn');
-
     if (printListBtn) {
         printListBtn.addEventListener('click', function() {
-            
             printTableContent();
         });
     }
 
+    const backToDashboardBtn = document.getElementById('backToDashboardBtn');
     if (backToDashboardBtn) {
         backToDashboardBtn.addEventListener('click', function() {
             Swal.fire({
@@ -245,7 +313,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmButtonText: 'Yes, go to dashboard!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    
                     Swal.fire('Redirecting...', 'Returning to dashboard now.', 'success');
                 }
             });
@@ -291,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             if (selectedValue === 'all') {
-                
+
                 Object.values(columnIndices).forEach(index => {
                     if (headers[index]) headers[index].style.display = '';
                     rows.forEach(row => {
@@ -308,7 +375,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 rows.forEach(row => {
                     if (row.cells[selectedColumnIndex]) row.cells[selectedColumnIndex].style.display = '';
-                    if (row.cells[actionsColumnIndex]) row.cells[actionsColumnIndex].style.display = ''; 
+                    if (row.cells[actionsColumnIndex]) row.cells[actionsColumnIndex].style.display = '';
                 });
             }
         });
@@ -327,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
         customerName: 1,
         fatherName: 2,
         address: 3,
-        primaryCell: 5 
+        primaryCell: 5
     };
 
     function filterTable() {
@@ -345,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if (!cellText.includes(searchText)) {
                         rowMatchesAllCriteria = false;
-                        break; 
+                        break;
                     }
                 }
             }
@@ -358,7 +425,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    
     for (const key in searchInputs) {
         if (searchInputs[key]) {
             searchInputs[key].addEventListener('input', filterTable);
@@ -368,11 +434,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (customersTableBody) {
         customersTableBody.addEventListener('click', function(event) {
             const target = event.target.closest('button');
-            if (!target) return;
+            if (!target) return; 
 
             const row = target.closest('tr');
-            if (!row) return;
+            if (!row) return; 
 
+        
             const customerId = row.children[0].textContent;
             const customerName = row.children[1].textContent;
             const fatherName = row.children[2].textContent;
@@ -381,7 +448,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const primaryCell = row.children[5].textContent;
 
             if (target.classList.contains('view-btn')) {
-
+                
                 customerIDInput.value = customerId;
                 customerNameInput.value = customerName;
                 fatherNameInput.value = fatherName;
@@ -389,7 +456,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 cnicFormInput.value = cnic;
                 primaryCellNoInput.value = primaryCell;
                 secondaryCellNoInput.value = ''; 
-                invoiceNumberInput.value = ''; 
+                invoiceNumberInput.value = '';
                 amountOpeningInput.value = '';
                 invoiceDateInput.value = '';
 
@@ -405,7 +472,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 amountOpeningInput.readOnly = true;
                 invoiceDateInput.readOnly = true;
 
-                
+
                 document.getElementById('cnicFront').disabled = true;
                 document.getElementById('cnicBack').disabled = true;
                 document.querySelector('label[for="cnicFront"]').style.display = 'none';
@@ -415,7 +482,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelectorAll('.relation-dropdown').forEach(dropdown => dropdown.disabled = true);
                 document.querySelectorAll('.add-relation-btn').forEach(btn => btn.style.display = 'none');
                 document.querySelectorAll('.remove-relation-btn').forEach(btn => btn.style.display = 'none');
-
 
                 submitButton.style.display = 'none'; 
 
@@ -430,12 +496,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 cnicFormInput.value = cnic;
                 primaryCellNoInput.value = primaryCell;
                 secondaryCellNoInput.value = ''; 
-                invoiceNumberInput.value = ''; 
+                invoiceNumberInput.value = '';
                 amountOpeningInput.value = '';
                 invoiceDateInput.value = '';
 
                 
-                customerIDInput.readOnly = true;
+                customerIDInput.readOnly = true; 
                 customerNameInput.readOnly = false;
                 fatherNameInput.readOnly = false;
                 addressInput.readOnly = false;
@@ -452,28 +518,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelector('label[for="cnicFront"]').style.display = '';
                 document.querySelector('label[for="cnicBack"]').style.display = '';
 
-                 
+                
                 document.querySelectorAll('.relation-dropdown').forEach(dropdown => dropdown.disabled = false);
+
                 
                 const relationGroupContainer = document.querySelector('.form-group.relation-group-container');
                 let currentWrappers = relationGroupContainer.querySelectorAll('.relation-input-wrapper');
+                // Remove all but the first wrapper
                 for (let i = 1; i < currentWrappers.length; i++) {
                     currentWrappers[i].remove();
                 }
                 const firstRelationWrapper = relationGroupContainer.querySelector('.relation-input-wrapper');
                 if (firstRelationWrapper) {
-                    firstRelationWrapper.querySelector('.relation-dropdown').value = 'S/o';
+                    populateRelationDropdown(firstRelationWrapper.querySelector('.relation-dropdown'), true);
                 }
-                relationCount = 1;
+                relationCount = 1; 
                 updateRelationButtons(); 
 
-
-                submitButton.style.display = 'inline-block'; 
+                submitButton.style.display = 'inline-block';
                 submitButton.textContent = 'Update'; 
                 editingRow = row; 
                 customerForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
             } else if (target.classList.contains('delete-btn')) {
+                
                 Swal.fire({
                     title: 'Are you sure?',
                     text: `Do you want to delete customer ID: ${customerId} (${customerName})?`,
@@ -484,7 +552,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        row.remove();
+                        row.remove(); 
                         Swal.fire(
                             'Deleted!',
                             'Customer has been deleted.',
@@ -493,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             } else if (target.classList.contains('print-btn')) {
-                printRowContent(row);
+                printRowContent(row); 
             }
         });
     }
@@ -513,7 +581,7 @@ document.addEventListener('DOMContentLoaded', function() {
         printWindow.document.write('<h2>Customer Details</h2>');
         printWindow.document.write('<table class="customers-table">');
         printWindow.document.write('<thead><tr>');
-        
+
         customersTable.querySelectorAll('thead th').forEach((header, index) => {
             if (index < 6) { 
                 printWindow.document.write(`<th>${header.textContent}</th>`);
@@ -521,13 +589,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         printWindow.document.write('</tr></thead>');
         printWindow.document.write('<tbody><tr>');
-        
+
         row.querySelectorAll('td').forEach((cell, index) => {
             if (index < 6) { 
                 printWindow.document.write(`<td>${cell.textContent}</td>`);
             }
         });
-        printWindow.document.write('</tr></tbody></table>');
         printWindow.document.write('</body></html>');
         printWindow.document.close();
         printWindow.print();
@@ -553,7 +620,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const clonedRow = row.cloneNode(true);
             const actionsCell = clonedRow.querySelector('.action-buttons');
             if (actionsCell) {
-                actionsCell.remove();
+                actionsCell.remove(); 
             }
             printWindow.document.write(clonedRow.outerHTML);
         });
@@ -561,5 +628,18 @@ document.addEventListener('DOMContentLoaded', function() {
         printWindow.document.write('</body></html>');
         printWindow.document.close();
         printWindow.print();
+    }
+
+
+    const initialRelationWrapper = document.querySelector('.relation-group-container .relation-input-wrapper');
+    if (initialRelationWrapper) {
+        initialRelationWrapper.innerHTML = `
+            <select id="relation${relationCount}" name="relation[]" class="relation-dropdown"></select>
+            <button type="button" class="add-relation-btn" title="Add another relation">+</button>
+            <button type="button" class="remove-relation-btn" title="Clear relation">-</button>
+        `;
+
+        populateRelationDropdown(initialRelationWrapper.querySelector('.relation-dropdown'), true);
+        updateRelationButtons(); 
     }
 });
