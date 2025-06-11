@@ -188,7 +188,7 @@ input[type="text"]:disabled {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M9.293%2012.95l.707.707L15.657%208l-1.414-1.414L10%2010.828l-4.243-4.242L4.343%208z%22%20fill%3D%22%23666%22%2F%3E%3C%2Fsvg%3E'); /* Custom dropdown arrow */
+    background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M9.293%2012.95l.707.707L15.657%208l-1.414-1.414L10%2010.828l-4.243-4.242L4.343%208z%22%20fill%3D%22%23666%22%2F%3E%3C%2Fsvg%3E'); 
     background-repeat: no-repeat;
     background-position: right 8px center;
     background-size: 12px;
@@ -217,6 +217,7 @@ input[type="text"]:disabled {
 
 .add-relation-btn {
     background-color: #28a745;
+
 }
 .add-relation-btn:hover {
     background-color: #218838;
@@ -224,6 +225,7 @@ input[type="text"]:disabled {
 
 .remove-relation-btn {
     background-color: #dc3545;
+    
 }
 .remove-relation-btn:hover {
     background-color: #c82333;
